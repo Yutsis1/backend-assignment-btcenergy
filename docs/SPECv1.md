@@ -244,7 +244,7 @@ type BlockConsumptionResult {
   blockHash: String!
   blockTimeMs: String!
   transactionCount: Int!
-  totalTransactionEnergyWh: BigInt!
+  totalTransactionEnergyWh: Number!
   transactions: [TransactionConsumption!]!
 }
 
@@ -253,7 +253,7 @@ type RangeConsumptionResult {
   toTimestampMs: String!
   blockHashes: [String!]!
   transactionCount: Int!
-  totalTransactionEnergyWh: BigInt!
+  totalTransactionEnergyWh: Number!
   transactions: [RangeTransactionConsumption!]!
 }
 ```
@@ -282,9 +282,9 @@ tests/
 
 ## 13. Numerical Rules
 
-- Use `BigInt` for `energyWh` (1000 W is 1kW)
+- Use `energyWh` (1000 W is 1kW)
 - Convert time into `ms`
-- size in `bytes` in `BugInt`
+- size in `bytes`
 It is easier to convert on client side, but storing should be always in minimal integers.
 ### 13.1 Timestamp Rules
 
