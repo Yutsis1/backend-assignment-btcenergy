@@ -138,3 +138,6 @@ Run tests in watch mode:
 yarn test:watch
 ```
 
+## Client operation
+The prject contains `scenarios.http` file. To request execution required [Rest Client](https://marketplace.visualstudio.com/items?itemName=humao.rest-client) extention for VS Code 
+

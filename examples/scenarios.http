@@ -20,16 +20,6 @@ GET https://blockchain.info/blocks/{{timestamp_ms}}?format=json
 ###
 GET https://blockchain.info/rawaddr/{{address}}?limit=50&offset=0
 
-###
-POST http://localhost:4000/graphql
-Content-Type: application/json
-
-{
-  "query": "query GetRangeConsumption($from: String!, $to: String!) {\n  rangeConsumption(fromTimestampMs: $from, toTimestampMs: $to) {\n    fromTimestampMs\n    toTimestampMs\n    blockHashes\n    transactionCount\n    totalTransactionEnergyWh\n    transactions {\n      txHash\n      blockHash\n      timestampMs\n      sizeBytes\n      energyWh\n    }\n  }\n}",
-  "variables": {
-    "from": "1774114489000",
-  }
-}
 
 ###
 POST http://localhost:4000/graphql
@@ -58,11 +48,11 @@ X-REQUEST-TYPE: GraphQL
 
 query {
   rangeConsumption(toTimestampMs: "1774036943000",
-  #  fromTimestampMs: "1774005720000"
+   fromTimestampMs: "1774005720000"
    ) {
     fromTimestampMs
     toTimestampMs
-    blockHashes
+    # blockHashes
     transactionCount,
     totalTransactionEnergyWh
   }
