@@ -43,9 +43,9 @@ Persisting historical analytics beyond cache lifetime.
 ## 4. Assumptions
 Initial blockchain supported: Bitcoin only.
 Energy cost model:
-energyPerByteWh = 4.56
+energyPerBytekWh = 4.56
 Transaction energy is derived from transaction size:
-transactionEnergyWh = tx.size * energyPerByteWh
+transactionEnergyWh = tx.size * energyPerBytekWh
 Timestamps are handled in milliseconds at the API boundary.
 Internally, the service may convert timestamps to seconds where required by upstream payloads.
 ## 5. API Operations
@@ -199,39 +199,6 @@ Run with mocked Blockchain API and mocked/in-memory cache.
 * range query fetches only required day buckets
 * range query fetches only referenced blocks
 * aggregation matches expected fixture result
-### 10.3 System tests
-
-Run against the real Blockchain API in a controlled environment.
-
-Block consumption scenario
-
-Input:
-```
-{
-  "blockHash": "00000000000000000000c191f7765901b21c1e2e222b1e1b7817d8fdac6202ea"
-}
-```
-
-Expected:
-
-response contains the requested block hash
-response contains transaction list
-totalTransactionEnergyWh equals the sum of all returned transaction energies
-Range consumption scenario
-
-Input:
-```
-{
-  "fromTimestampMs": 0,
-  "toTimestampMs": 0
-}
-```
-
-Expected:
-
-response includes only transactions within the requested interval
-response includes the list of contributing block hashes
-aggregate total equals sum of returned transaction energies
 
 ## 11. GraphQL Contract
 ``` JavaScript

@@ -7,31 +7,9 @@ In this assignment, we included a few of the technologies that we use in our
 existing products:
 
 - **GraphQL:**
-  Within Sensorfact we expose most of our data regarding measurements, machine
-  specific configuration and industry knowledge via a GraphQL API.
 - **TypeScript:**
-  A big part of our code is written in plain JavaScript. All
-  new projects use TypeScript, because we like the benefits that the type system
-  offers us during development, reviews, and testing.
 
-## Process & Guidelines
-
->- **We aim to timebox the assignment to 4 hours**, but feel free to dedicate as much time as you consider necessary
->- Make a conscious decision on what you want to focus on: it's ok if you
-   cannot complete the entire assignment.
->- Send us your solution before the technical interview: link to a repository.
-   You can, for example, fork this repository.
->- The assignment includes a description of a problem to solve, which could potentially lack
-   details. Feel free to make assumptions if needed, or contact us for clarification if you consider it necessary.
->- Take this assignment as an opportunity to show us your style: what you like to
-   work on, what you find important, how you address problems,etc.
->- Feel free to use any tool you'd like, that includes AI assistants as well.
-   We want you to work with the tools you know from your Day2Day work but expect us to dive deep with you into   the decision making behind adding / using certain logic.
->- **During the technical interview, we invite you to present your solution and discuss
-   it together as a team**: which decisions you took and why, questions about specific parts of the code,
-   libraries you have used, how easy and maintainable is the code,etc.
-
-## Problem to solve (an imaginary one, of course ;))
+## Problem to solve (an imaginary one, of course ;)
 
 Sustainability is starting to take a key role in every product or solution launched into the market, and software
 systems are not an exception. It is not enough anymore to create and deploy in time complex and innovative
@@ -69,11 +47,6 @@ or a block index). Each block contains a set of transactions, each transaction a
     - Information of a single transaction: https://blockchain.info/rawtx/$tx_hash
     - Information on transactions for a specific wallet address: https://blockchain.info/rawaddr/$bitcoin_address
 
-## Project code
-This project is comes with a pre-configured GraphQL server, hosted as a serverless
-function to get you started on the assignment. However, feel free to write your
-own implementation if you prefer.
-
 ## Running the project
 Requirements:
 - NodeJS 20.x (run `nvm use` in root folder)
@@ -92,4 +65,76 @@ yarn start
 ```
 
 The server will be ready at: `http://localhost:4000/graphql`
+
+## Fetching data from the service
+
+The API is exposed through GraphQL at:
+
+`http://localhost:4000/graphql`
+
+You can query it from GraphQL Playground, Postman, Insomnia, or cURL.
+
+### Example 1: energy consumption for a single block
+
+```sh
+curl -X POST http://localhost:4000/graphql \
+   -H "Content-Type: application/json" \
+   -d '{
+      "query": "query($blockHash: String!) { blockConsumption(blockHash: $blockHash) { blockHash blockTimeMs transactionCount totalTransactionEnergyWh totalTransactionEnergykWh transactions { txHash timestampMs sizeBytes energyWh } } }",
+      "variables": {
+         "blockHash": "00000000000000000000c191f7765901b21c1e2e222b1e1b7817d8fdac6202ea"
+      }
+   }'
+```
+
+### Example 2: total energy in a time range
+
+```sh
+curl -X POST http://localhost:4000/graphql \
+   -H "Content-Type: application/json" \
+   -d '{
+      "query": "query($from: String!, $to: String!) { rangeConsumption(fromTimestampMs: $from, toTimestampMs: $to) { fromTimestampMs toTimestampMs blockHashes transactionCount totalTransactionEnergyWh totalTransactionEnergykWh } }",
+      "variables": {
+         "from": "1774036800000",
+         "to": "1774037100000"
+      }
+   }'
+```
+
+### Example 3: total energy for a wallet address
+
+```sh
+curl -X POST http://localhost:4000/graphql \
+   -H "Content-Type: application/json" \
+   -d '{
+      "query": "query($address: String!) { addressConsumption(address: $address) { address totalEnergyWh transactions { txHash timestampMs sizeBytes energyWh } } }",
+      "variables": {
+         "address": "bc1qlxjxptt4scqylcteyskvkwhy78rzaezffta3rnkhzag47wmknrhqejq8kp"
+      }
+   }'
+```
+Seems that the endpoint for wallet adresses has a daily quota and it blocks further request, so success for that request is low. I couldn't fetch consumption for wallet with more than 150 transactions which means 3 requests for pages. 
+
+## Documentation and rationale
+
+The full specification and rationale for calculations, API behavior, assumptions, and cache strategy are in:
+
+- `docs/SPECv1.md`
+- `docs/SPECv1_address_appendix.md`
+
+These docs are also intended to be used as reference material for code agents.
+
+## Running tests
+
+Run all unit tests:
+
+```sh
+yarn test
+```
+
+Run tests in watch mode:
+
+```sh
+yarn test:watch
+```
 
