@@ -1,5 +1,7 @@
 # dependencies
 /node_modules
+.test-dist
 .esbuild
 /.idea/modules.xml
 /.idea/backend-assignment-btcenergy.iml
+.vscode

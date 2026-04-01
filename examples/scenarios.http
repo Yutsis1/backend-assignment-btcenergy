@@ -1,0 +1,96 @@
+@blockhash=00000000000000000000c191f7765901b21c1e2e222b1e1b7817d8fdac6202ea
+@timestamp_ms=1774036943000
+@from_timestamp_sec=177403680000
+@from_timestamp_ms=177403680000000
+@to_timestamp_sec=1774037100000
+@to_timestamp_ms=177403710000000
+@byte_cost=4560
+@tx_hash=d3bd4fe7dfad8c9f9bbf0c23cf97e713cab0cc97c535c6f0121e97936e45cd99
+@address=bc1qlxjxptt4scqylcteyskvkwhy78rzaezffta3rnkhzag47wmknrhqejq8kp
+
+GET https://blockchain.info/rawblock/{{blockhash}}
+
+###
+GET https://blockchain.info/rawtx/{{tx_hash}}
+
+###
+# need to add 000 to the end of the timestamp to get the correct format
+GET https://blockchain.info/blocks/{{timestamp_ms}}?format=json
+
+###
+GET https://blockchain.info/rawaddr/{{address}}?limit=50&offset=0
+
+###
+POST http://localhost:4000/graphql
+Content-Type: application/json
+
+{
+  "query": "query GetRangeConsumption($from: String!, $to: String!) {\n  rangeConsumption(fromTimestampMs: $from, toTimestampMs: $to) {\n    fromTimestampMs\n    toTimestampMs\n    blockHashes\n    transactionCount\n    totalTransactionEnergyWh\n    transactions {\n      txHash\n      blockHash\n      timestampMs\n      sizeBytes\n      energyWh\n    }\n  }\n}",
+  "variables": {
+    "from": "1774114489000",
+  }
+}
+
+###
+POST http://localhost:4000/graphql
+Content-Type: application/graphql
+X-REQUEST-TYPE: GraphQL
+
+query GetBlockConsumption {
+  blockConsumption(blockHash: "{{blockhash}}") {
+    blockHash
+    blockTimeMs
+    transactionCount
+    # totalTransactionEnergyWh
+    totalTransactionEnergykWh
+    transactions {
+      # txHash
+      timestampMs
+      sizeBytes
+      energyWh
+    }
+  }
+}
+###
+POST http://localhost:4000/graphql
+Content-Type: application/graphql
+X-REQUEST-TYPE: GraphQL
+
+query {
+  rangeConsumption(toTimestampMs: "1774036943000",
+  #  fromTimestampMs: "1774005720000"
+   ) {
+    fromTimestampMs
+    toTimestampMs
+    blockHashes
+    transactionCount,
+    totalTransactionEnergyWh
+  }
+}
+
+###
+# I've tryed to playaround it, but if it is more than 150 transactions on adress
+# it fails with 429 Too Many Requests, because of blockchain.info API limits
+# I couldn't optimize it more 
+POST http://localhost:4000/graphql
+Content-Type: application/graphql
+X-REQUEST-TYPE: GraphQL
+
+query{
+  addressConsumption(
+    address: "{{address}}",
+    )
+    {
+      # address
+      totalEnergyWh
+      transactions {
+        txHash
+        # blockHash
+        # timestampMs
+        sizeBytes
+        energyWh
+      }
+    }
+}
+
+

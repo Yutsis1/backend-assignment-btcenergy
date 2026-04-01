@@ -5,10 +5,11 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "serverless offline start --httpPort=4000 --host 0.0.0.0 --reloadHandler",
+    "start": "serverless offline start --httpPort=4000 --host 0.0.0.0",
     "compile": "tsc -p . --noEmit",
-    "test": "jest",
-    "test:watch": "jest --watch --onlyChanged"
+    "test": "tsc -p tsconfig.test.json && node scripts/run-jest.js",
+    "test:system": "tsc -p tsconfig.test.json && node scripts/run-jest.js --config jest.system.config.js --runInBand",
+    "test:watch": "tsc -p tsconfig.test.json && node scripts/run-jest.js --watch --onlyChanged"
   },
   "dependencies": {
     "graphql": "^15.5.1",

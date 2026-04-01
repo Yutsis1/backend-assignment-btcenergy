@@ -20,7 +20,7 @@ custom:
   esbuild:
     packager: yarn
     minify: false
-    sourcemap: false
+    sourcemap: inline
     target: node20
     watch:
       pattern: ['src/**/*.ts']
